@@ -11,7 +11,26 @@ var Defaults;
             onAir: false,
             inTransition: false,
             isAuto: false,
-            remainingFrames: Video.defaultRate
+            remainingFrames: Video.defaultRate,
+            sources: {
+                fillSource: Video.defaultInput,
+                cutSource: Video.defaultInput
+            },
+            properties: {
+                tie: false,
+                rate: Video.defaultRate,
+                preMultiply: false,
+                clip: 0,
+                gain: 0,
+                invert: false,
+                mask: {
+                    enabled: false,
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                }
+            }
         };
         Video.DipTransitionSettings = {
             rate: Video.defaultRate,
