@@ -112,65 +112,75 @@ function resolveTransitionSettingsState(oldState, newState) {
     for (const mixEffectId in oldState.video.ME) {
         const oldTransitionSettings = oldState.video.ME[mixEffectId].transitionSettings;
         const newTransitionSettings = newState.video.ME[mixEffectId].transitionSettings;
-        const dipProperties = {};
-        for (let key in oldTransitionSettings.dip) {
-            if (oldTransitionSettings.dip[key] !== newTransitionSettings.dip[key]) {
-                dipProperties[key] = newTransitionSettings.dip[key];
+        if (newTransitionSettings.dip) {
+            const dipProperties = {};
+            for (let key in oldTransitionSettings.dip) {
+                if (oldTransitionSettings.dip[key] !== newTransitionSettings.dip[key]) {
+                    dipProperties[key] = newTransitionSettings.dip[key];
+                }
+            }
+            if (Object.keys(dipProperties).length > 0) {
+                let command = new atem_connection_1.Commands.TransitionDipCommand();
+                command.mixEffect = Number(mixEffectId);
+                command.updateProps(dipProperties);
+                commands.push(command);
             }
         }
-        if (Object.keys(dipProperties).length > 0) {
-            let command = new atem_connection_1.Commands.TransitionDipCommand();
-            command.mixEffect = Number(mixEffectId);
-            command.updateProps(dipProperties);
-            commands.push(command);
-        }
-        const dveProperties = {};
-        for (let key in oldTransitionSettings.DVE) {
-            if (oldTransitionSettings.DVE[key] !== newTransitionSettings.DVE[key]) {
-                dveProperties[key] = newTransitionSettings.DVE[key];
+        if (newTransitionSettings.DVE) {
+            const dveProperties = {};
+            for (let key in oldTransitionSettings.DVE) {
+                if (oldTransitionSettings.DVE[key] !== newTransitionSettings.DVE[key]) {
+                    dveProperties[key] = newTransitionSettings.DVE[key];
+                }
+            }
+            if (Object.keys(dveProperties).length > 0) {
+                let command = new atem_connection_1.Commands.TransitionDVECommand();
+                command.mixEffect = Number(mixEffectId);
+                command.updateProps(dveProperties);
+                commands.push(command);
             }
         }
-        if (Object.keys(dveProperties).length > 0) {
-            let command = new atem_connection_1.Commands.TransitionDVECommand();
-            command.mixEffect = Number(mixEffectId);
-            command.updateProps(dveProperties);
-            commands.push(command);
-        }
-        const mixProperties = {};
-        for (let key in oldTransitionSettings.mix) {
-            if (oldTransitionSettings.mix[key] !== newTransitionSettings.mix[key]) {
-                mixProperties[key] = newTransitionSettings.mix[key];
+        if (newTransitionSettings.mix) {
+            const mixProperties = {};
+            for (let key in oldTransitionSettings.mix) {
+                if (oldTransitionSettings.mix[key] !== newTransitionSettings.mix[key]) {
+                    mixProperties[key] = newTransitionSettings.mix[key];
+                }
+            }
+            if (Object.keys(mixProperties).length > 0) {
+                let command = new atem_connection_1.Commands.TransitionMixCommand();
+                command.mixEffect = Number(mixEffectId);
+                command.updateProps(mixProperties);
+                commands.push(command);
             }
         }
-        if (Object.keys(mixProperties).length > 0) {
-            let command = new atem_connection_1.Commands.TransitionMixCommand();
-            command.mixEffect = Number(mixEffectId);
-            command.updateProps(mixProperties);
-            commands.push(command);
-        }
-        const stingerProperties = {};
-        for (let key in oldTransitionSettings.stinger) {
-            if (oldTransitionSettings.stinger[key] !== newTransitionSettings.stinger[key]) {
-                stingerProperties[key] = newTransitionSettings.stinger[key];
+        if (newTransitionSettings.stinger) {
+            const stingerProperties = {};
+            for (let key in oldTransitionSettings.stinger) {
+                if (oldTransitionSettings.stinger[key] !== newTransitionSettings.stinger[key]) {
+                    stingerProperties[key] = newTransitionSettings.stinger[key];
+                }
+            }
+            if (Object.keys(stingerProperties).length > 0) {
+                let command = new atem_connection_1.Commands.TransitionStingerCommand();
+                command.mixEffect = Number(mixEffectId);
+                command.updateProps(stingerProperties);
+                commands.push(command);
             }
         }
-        if (Object.keys(stingerProperties).length > 0) {
-            let command = new atem_connection_1.Commands.TransitionStingerCommand();
-            command.mixEffect = Number(mixEffectId);
-            command.updateProps(stingerProperties);
-            commands.push(command);
-        }
-        const wipeProperties = {};
-        for (let key in oldTransitionSettings.wipe) {
-            if (oldTransitionSettings.wipe[key] !== newTransitionSettings.wipe[key]) {
-                wipeProperties[key] = newTransitionSettings.wipe[key];
+        if (newTransitionSettings.wipe) {
+            const wipeProperties = {};
+            for (let key in oldTransitionSettings.wipe) {
+                if (oldTransitionSettings.wipe[key] !== newTransitionSettings.wipe[key]) {
+                    wipeProperties[key] = newTransitionSettings.wipe[key];
+                }
             }
-        }
-        if (Object.keys(wipeProperties).length > 0) {
-            let command = new atem_connection_1.Commands.TransitionWipeCommand();
-            command.mixEffect = Number(mixEffectId);
-            command.updateProps(wipeProperties);
-            commands.push(command);
+            if (Object.keys(wipeProperties).length > 0) {
+                let command = new atem_connection_1.Commands.TransitionWipeCommand();
+                command.mixEffect = Number(mixEffectId);
+                command.updateProps(wipeProperties);
+                commands.push(command);
+            }
         }
     }
     return commands;
