@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const atem_connection_1 = require("atem-connection");
 const _1 = require("../");
+const upstreamKeyers_1 = require("./upstreamKeyers");
 function resolveMixEffectsState(oldState, newState) {
     let commands = [];
     commands = commands.concat(resolveTransitionPropertiesState(oldState, newState));
     commands = commands.concat(resolveTransitionSettingsState(oldState, newState));
+    commands = commands.concat(upstreamKeyers_1.resolveUpstreamKeyerState(oldState, newState));
     for (const mixEffectId in oldState.video.ME) {
         const oldMixEffect = oldState.video.ME[mixEffectId];
         const newMixEffect = newState.video.ME[mixEffectId];
