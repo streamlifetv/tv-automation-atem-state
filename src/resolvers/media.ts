@@ -1,11 +1,11 @@
 import {
 	Commands as AtemCommands, MediaState
 } from 'atem-connection'
-import AbstractCommand from 'atem-connection/dist/commands/AbstractCommand' // @todo: should come from main exports
+import { Commands } from 'atem-connection' // @todo: should come from main exports
 import { State as StateObject } from '../'
 
-export function resolveMediaPlayerState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	const commands: Array<AbstractCommand> = []
+export function resolveMediaPlayerState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	const commands: Array<Commands.AbstractCommand> = []
 
 	for (const index in newState.media.players) {
 		const newPlayer = newState.media.players[index]

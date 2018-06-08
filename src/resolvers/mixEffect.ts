@@ -1,19 +1,19 @@
 import {
-	Commands as AtemCommands,
+	Commands,
 	Enums as ConnectionEnums,
 	VideoState } from 'atem-connection'
-import AbstractCommand from 'atem-connection/dist/commands/AbstractCommand' // @todo: should come from main exports
 import { Enums, State as StateObject } from '../'
 
 import { resolveUpstreamKeyerState } from './upstreamKeyers'
 
-export function resolveMixEffectsState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	let commands: Array<AbstractCommand> = []
+export function resolveMixEffectsState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	let commands: Array<Commands.AbstractCommand> = []
 
 	commands = commands.concat(resolveTransitionPropertiesState(oldState, newState))
 	commands = commands.concat(resolveTransitionSettingsState(oldState, newState))
 	commands = commands.concat(resolveUpstreamKeyerState(oldState, newState))
 
+	// let a = resolveUpstreamKeyerState(oldState, newState)
 	for (const mixEffectId in oldState.video.ME) {
 		const oldMixEffect = oldState.video.ME[mixEffectId]
 		const newMixEffect = newState.video.ME[mixEffectId]
@@ -23,31 +23,31 @@ export function resolveMixEffectsState (oldState: StateObject, newState: StateOb
 				oldMixEffect.input = oldMixEffect.programInput
 			}
 			if (newMixEffect.input !== oldMixEffect.input) {
-				const command = new AtemCommands.PreviewInputCommand()
+				const command = new Commands.PreviewInputCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps({ source: newMixEffect.input })
 				commands.push(command)
 
 				if (newMixEffect.transition === Enums.TransitionStyle.CUT) {
-					const command = new AtemCommands.CutCommand()
+					const command = new Commands.CutCommand()
 					command.mixEffect = Number(mixEffectId)
 					commands.push(command)
 				} else {
 					if (newMixEffect.transition !== newMixEffect.transitionProperties.style) { // set style before auto transition command
-						const command = new AtemCommands.TransitionPropertiesCommand()
+						const command = new Commands.TransitionPropertiesCommand()
 						command.mixEffect = Number(mixEffectId)
 						command.updateProps({ style: newMixEffect.transition! as ConnectionEnums.TransitionStyle })
 						commands.push(command)
 					}
 
-					const command = new AtemCommands.AutoTransitionCommand()
+					const command = new Commands.AutoTransitionCommand()
 					command.mixEffect = Number(mixEffectId)
 					commands.push(command)
 				}
 			}
 		} else {
 			if (oldMixEffect.previewInput !== newMixEffect.previewInput) {
-				const command = new AtemCommands.PreviewInputCommand()
+				const command = new Commands.PreviewInputCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps({ source: newMixEffect.previewInput })
 				commands.push(command)
@@ -57,7 +57,7 @@ export function resolveMixEffectsState (oldState: StateObject, newState: StateOb
 				// use cut command if:
 				//   DSK is tied
 				//   Upstream Keyer is set for next transition
-				const command = new AtemCommands.ProgramInputCommand()
+				const command = new Commands.ProgramInputCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps({ source: newMixEffect.programInput })
 				commands.push(command)
@@ -65,7 +65,7 @@ export function resolveMixEffectsState (oldState: StateObject, newState: StateOb
 		}
 
 		if (newMixEffect.inTransition && oldMixEffect.transitionPosition !== newMixEffect.transitionPosition) {
-			const command = new AtemCommands.TransitionPositionCommand()
+			const command = new Commands.TransitionPositionCommand()
 			command.mixEffect = Number(mixEffectId)
 			command.updateProps({
 				handlePosition: newMixEffect.transitionPosition
@@ -74,7 +74,7 @@ export function resolveMixEffectsState (oldState: StateObject, newState: StateOb
 		}
 
 		if (oldMixEffect.transitionPreview !== newMixEffect.transitionPreview) {
-			const command = new AtemCommands.PreviewTransitionCommand()
+			const command = new Commands.PreviewTransitionCommand()
 			command.mixEffect = Number(mixEffectId)
 			command.updateProps({
 				preview: newMixEffect.transitionPreview
@@ -88,8 +88,8 @@ export function resolveMixEffectsState (oldState: StateObject, newState: StateOb
 	return commands
 }
 
-export function resolveTransitionPropertiesState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	const commands: Array<AbstractCommand> = []
+export function resolveTransitionPropertiesState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	const commands: Array<Commands.AbstractCommand> = []
 
 	for (const mixEffectId in oldState.video.ME) {
 		const oldTransitionProperties = oldState.video.ME[mixEffectId].transitionProperties
@@ -104,7 +104,7 @@ export function resolveTransitionPropertiesState (oldState: StateObject, newStat
 		}
 
 		if (props.selection || props.style) {
-			const command = new AtemCommands.TransitionPropertiesCommand()
+			const command = new Commands.TransitionPropertiesCommand()
 			command.mixEffect = Number(mixEffectId)
 			command.updateProps(props)
 			commands.push(command)
@@ -114,8 +114,8 @@ export function resolveTransitionPropertiesState (oldState: StateObject, newStat
 	return commands
 }
 
-export function resolveTransitionSettingsState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	const commands: Array<AbstractCommand> = []
+export function resolveTransitionSettingsState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	const commands: Array<Commands.AbstractCommand> = []
 
 	/**
 	 * NOTE(balte - 2018-05-01):
@@ -137,7 +137,7 @@ export function resolveTransitionSettingsState (oldState: StateObject, newState:
 				}
 			}
 			if (Object.keys(dipProperties).length > 0) {
-				let command = new AtemCommands.TransitionDipCommand()
+				let command = new Commands.TransitionDipCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(dipProperties)
 				commands.push(command)
@@ -152,7 +152,7 @@ export function resolveTransitionSettingsState (oldState: StateObject, newState:
 				}
 			}
 			if (Object.keys(dveProperties).length > 0) {
-				let command = new AtemCommands.TransitionDVECommand()
+				let command = new Commands.TransitionDVECommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(dveProperties)
 				commands.push(command)
@@ -167,7 +167,7 @@ export function resolveTransitionSettingsState (oldState: StateObject, newState:
 				}
 			}
 			if (Object.keys(mixProperties).length > 0) {
-				let command = new AtemCommands.TransitionMixCommand()
+				let command = new Commands.TransitionMixCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(mixProperties)
 				commands.push(command)
@@ -182,7 +182,7 @@ export function resolveTransitionSettingsState (oldState: StateObject, newState:
 				}
 			}
 			if (Object.keys(stingerProperties).length > 0) {
-				let command = new AtemCommands.TransitionStingerCommand()
+				let command = new Commands.TransitionStingerCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(stingerProperties)
 				commands.push(command)
@@ -197,7 +197,7 @@ export function resolveTransitionSettingsState (oldState: StateObject, newState:
 				}
 			}
 			if (Object.keys(wipeProperties).length > 0) {
-				let command = new AtemCommands.TransitionWipeCommand()
+				let command = new Commands.TransitionWipeCommand()
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(wipeProperties)
 				commands.push(command)

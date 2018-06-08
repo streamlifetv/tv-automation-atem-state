@@ -1,10 +1,9 @@
-import { Commands as AtemCommands } from 'atem-connection'
-import AbstractCommand from 'atem-connection/dist/commands/AbstractCommand' // @todo: should come from main exports
+import { Commands } from 'atem-connection' // @todo: should come from main exports
 import { State as StateObject } from '../../'
 import { UpstreamKeyerLumaSettings } from 'atem-connection/dist/state/video/upstreamKeyers'
 
-export function resolveLumaKeyerState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	let commands: Array<AbstractCommand> = []
+export function resolveLumaKeyerState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	let commands: Array<Commands.AbstractCommand> = []
 
 	for (const mixEffectId in oldState.video.ME) {
 		for (const upstreamKeyerId in oldState.video.ME[mixEffectId].upstreamKeyers) {
@@ -12,14 +11,14 @@ export function resolveLumaKeyerState (oldState: StateObject, newState: StateObj
 			const newLumaKeyer = newState.video.ME[mixEffectId].upstreamKeyers[upstreamKeyerId].lumaSettings
 			const props: Partial<UpstreamKeyerLumaSettings> = {}
 
-			for (const key in AtemCommands.MixEffectKeyLumaCommand.MaskFlags) {
+			for (const key in Commands.MixEffectKeyLumaCommand.MaskFlags) {
 				if ((oldLumaKeyer as any)[key] !== (newLumaKeyer as any)[key]) {
 					(props as any)[key] = (newLumaKeyer as any)[key]
 				}
 			}
 
 			if (Object.keys(props).length > 0) {
-				const command = new AtemCommands.MixEffectKeyLumaCommand()
+				const command = new Commands.MixEffectKeyLumaCommand()
 				command.upstreamKeyerId = Number(upstreamKeyerId)
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(props)

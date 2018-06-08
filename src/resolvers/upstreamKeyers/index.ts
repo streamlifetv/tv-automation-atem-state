@@ -1,5 +1,4 @@
-import { Commands as AtemCommands } from 'atem-connection'
-import AbstractCommand from 'atem-connection/dist/commands/AbstractCommand' // @todo: should come from main exports
+import { Commands } from 'atem-connection' // @todo: should come from main exports
 import { State as StateObject } from '../../'
 import { UpstreamKeyerMaskSettings } from 'atem-connection/dist/state/video/upstreamKeyers'
 
@@ -8,8 +7,8 @@ import { resolveChromaKeyerState } from './chromaKeyer'
 import { resolveLumaKeyerState } from './lumaKeyer'
 import { resolvePatternKeyerState } from './patternKeyer'
 
-export function resolveUpstreamKeyerState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	let commands: Array<AbstractCommand> = []
+export function resolveUpstreamKeyerState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	let commands: Array<Commands.AbstractCommand> = []
 
 	commands = commands.concat(resolveUpstreamKeyerMaskState(oldState, newState))
 	commands = commands.concat(resolveDVEKeyerState(newState, oldState))
@@ -23,7 +22,7 @@ export function resolveUpstreamKeyerState (oldState: StateObject, newState: Stat
 			const newKeyer = newState.video.ME[mixEffectId].upstreamKeyers[upstreamKeyerId]
 
 			if (oldKeyer.fillSource !== newKeyer.fillSource) {
-				const command = new AtemCommands.MixEffectKeyFillSourceSetCommand()
+				const command = new Commands.MixEffectKeyFillSourceSetCommand()
 				command.upstreamKeyerId = Number(upstreamKeyerId)
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps({
@@ -32,7 +31,7 @@ export function resolveUpstreamKeyerState (oldState: StateObject, newState: Stat
 				commands.push(command)
 			}
 			if (oldKeyer.cutSource !== newKeyer.cutSource) {
-				const command = new AtemCommands.MixEffectKeyCutSourceSetCommand()
+				const command = new Commands.MixEffectKeyCutSourceSetCommand()
 				command.upstreamKeyerId = Number(upstreamKeyerId)
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps({
@@ -42,7 +41,7 @@ export function resolveUpstreamKeyerState (oldState: StateObject, newState: Stat
 			}
 
 			if (oldKeyer.mixEffectKeyType !== newKeyer.mixEffectKeyType || oldKeyer.flyEnabled !== newKeyer.flyEnabled) {
-				const command = new AtemCommands.MixEffectKeyTypeSetCommand()
+				const command = new Commands.MixEffectKeyTypeSetCommand()
 				command.upstreamKeyerId = Number(upstreamKeyerId)
 				command.mixEffect = Number(mixEffectId)
 				if (oldKeyer.mixEffectKeyType !== newKeyer.mixEffectKeyType) command.updateProps({ keyType: newKeyer.mixEffectKeyType })
@@ -51,7 +50,7 @@ export function resolveUpstreamKeyerState (oldState: StateObject, newState: Stat
 			}
 
 			if (oldKeyer.onAir !== newKeyer.onAir) {
-				const command = new AtemCommands.MixEffectKeyOnAirCommand()
+				const command = new Commands.MixEffectKeyOnAirCommand()
 				command.upstreamKeyerId = Number(upstreamKeyerId)
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps({
@@ -65,8 +64,8 @@ export function resolveUpstreamKeyerState (oldState: StateObject, newState: Stat
 	return commands
 }
 
-export function resolveUpstreamKeyerMaskState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	let commands: Array<AbstractCommand> = []
+export function resolveUpstreamKeyerMaskState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	let commands: Array<Commands.AbstractCommand> = []
 
 	for (const mixEffectId in oldState.video.ME) {
 		for (const upstreamKeyerId in oldState.video.ME[mixEffectId].upstreamKeyers) {
@@ -80,7 +79,7 @@ export function resolveUpstreamKeyerMaskState (oldState: StateObject, newState: 
 			if (oldKeyer.maskBottom !== newKeyer.maskBottom) props.maskBottom = newKeyer.maskBottom
 
 			if (Object.keys(props).length > 0) {
-				const command = new AtemCommands.MixEffectKeyMaskSetCommand()
+				const command = new Commands.MixEffectKeyMaskSetCommand()
 				command.upstreamKeyerId = Number(upstreamKeyerId)
 				command.mixEffect = Number(mixEffectId)
 				command.updateProps(props)

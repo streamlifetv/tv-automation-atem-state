@@ -1,11 +1,10 @@
 import {
-	Commands as AtemCommands, VideoState
+	Commands, VideoState
 } from 'atem-connection'
-import AbstractCommand from 'atem-connection/dist/commands/AbstractCommand' // @todo: should come from main exports
 import { State as StateObject } from '../'
 
-export function resolveSupersourceBoxState (oldState: StateObject, newState: StateObject): Array<AbstractCommand> {
-	const commands: Array<AbstractCommand> = []
+export function resolveSupersourceBoxState (oldState: StateObject, newState: StateObject): Array<Commands.AbstractCommand> {
+	const commands: Array<Commands.AbstractCommand> = []
 
 	for (const index in newState.video.superSourceBoxes) {
 		const newBox = newState.video.superSourceBoxes[index] || {}
@@ -19,7 +18,7 @@ export function resolveSupersourceBoxState (oldState: StateObject, newState: Sta
 		}
 
 		if (Object.keys(props).length > 0) {
-			const command = new AtemCommands.SuperSourceBoxParametersCommand()
+			const command = new Commands.SuperSourceBoxParametersCommand()
 			command.boxId = Number(index)
 			command.updateProps(props)
 			commands.push(command)
